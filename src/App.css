@@ -29,3 +29,14 @@
   display: flex;
   flex-wrap: wrap;
 }
+.shimmer>.img{
+  width: 200px;
+  height: 200px;
+  background-color: rgba(179, 167, 167, 0.776);
+  margin: 5px;
+}
+.shimmer>h1{
+  background-color: rgba(179, 167, 167, 0.776);
+  color: rgba(179, 167, 167, 0.776);
+  margin: 5px;
+}

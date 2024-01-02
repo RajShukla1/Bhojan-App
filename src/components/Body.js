@@ -1,27 +1,47 @@
 import { useState } from "react";
 import RestaurantCard from "./RestaurantCard";
-import { restaurantList } from "./constants";
+import { API, restaurantList } from "./constants";
+import { useEffect } from "react";
+import Shimmer from "./Shimmer";
 
 const filterData = (searchText,restaurants) =>{
         // let restaurants = restaurantList;
-        restaurants = restaurants.filter((restaurant)=>restaurant.info.name.includes(searchText));
+        restaurants = restaurants.filter((restaurant)=>restaurant?.info?.name?.toLowerCase()?.includes(searchText.toLowerCase()));
         return restaurants;
 }
 const Body = ()=>{
     const [searchText, setSearchText] = useState('');
-    const [restaurants, setRestaurants] = useState(restaurantList);
-    return (
+    const [allRestaurants, setAllRestaurants] = useState([]);
+    const [restaurants, setRestaurants] = useState([]);
+
+    const getRestaurants = async ()=>{
+        let data = await fetch(API);
+        let json = await data.json();
+        console.log(json);
+        console.log(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
+        setAllRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
+        setRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+    }
+
+    useEffect(()=>{
+        getRestaurants();
+    },[])
+
+    return (allRestaurants?.length === 0)? <Shimmer/>:(
         <>
         <div className="search-container">
-            <input type="text" value={searchText} onChange={(e)=>setSearchText(e.target.value)} className="search-input" placeholder="search"/>
-            <button className="search-btn" onClick={()=>{
-                let data = filterData(searchText, restaurantList);
+            <input type="text" value={searchText} onChange={(e)=>{
+                setSearchText(e.target.value)
+                let data = filterData(e.target.value, allRestaurants);
                 setRestaurants(data);
+                }} className="search-input" placeholder="search"/>
+            <button className="search-btn" onClick={()=>{
+               
             }}>Search</button>
         </div>
       <div className='restaurant-list'>
       {
-        restaurants.map((restaurant, i)=><RestaurantCard key={i} {...restaurant?.info } />)
+        restaurants?.length === 0 ? <h1>No result found...</h1> :  restaurants.map((restaurant, i)=><RestaurantCard key={i} {...restaurant?.info } />)
       }
       </div>
       </>
