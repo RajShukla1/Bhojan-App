@@ -4,17 +4,30 @@
   margin: 10px;
   border: 1px solid black;
 }
-
+.nav-items{
+    /* flex-grow: 1; */
+    width: 100%;
+}
 .nav-items > ul{
   list-style-type: none;
   display: flex;
+  justify-content: space-evenly;
 }
 
 .nav-items > ul > li{
   padding: 10px;
 }
+.nav-links{
+  text-decoration: none;
+  color: black;
+}
+.nav-links:hover{
+  color: blueviolet;
+}
+
 .logo{
-  width: 100px;
+  width: 150px;
+  text-decoration: none;
 }
 .card{
   width: 200px;
