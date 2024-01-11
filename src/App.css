@@ -2,7 +2,8 @@
   display: flex;
   justify-content: space-between;
   margin: 10px;
-  border: 1px solid black;
+  box-shadow: 5px 5px 5px rgb(117, 106, 106);
+  /* border: 1px solid black; */
 }
 .nav-items{
     /* flex-grow: 1; */
