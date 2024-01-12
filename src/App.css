@@ -30,14 +30,24 @@
   width: 150px;
   text-decoration: none;
 }
+.search-input{
+  width: 500px;
+  height: 50px;
+  font-size: xx-large;
+}
 .card{
-  width: 200px;
-  border: 1px solid black;
   padding: 10px;
   margin: 10px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 5px 5px 5px 5px whitesmoke;
+  /* align-items: center; */
 }
 .card > img{
-  width: 100%;
+  border-radius: 50%;
+  border: 5px solid green;
+  width: 250px;
+  height: 250px;
 }
 .restaurant-list{
   display: flex;
