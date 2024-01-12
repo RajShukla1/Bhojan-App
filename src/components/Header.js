@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
+import "../logo.jpeg";
 
 const Title = ()=>{
     return (
     <a href="/">
-      <h1 className="logo">Bhojan</h1>
-    {/* <img className="logo" src ="" alt="logo"/> */}
+      <img className="logo" src="../logo.png" alt="logo"/>
     </a>
     )
   }
@@ -14,10 +14,10 @@ const Title = ()=>{
         <Title/>
         <div className="nav-items">
           <ul>
-            <li><Link to='/'>Home</Link></li>
-            <li><Link to='/about'>About</Link></li>
-            <li><Link to='/contact'>Contact</Link></li>
-            <li><Link to='cart'>Cart</Link></li>
+            <li><Link className="nav-links" to='/'>🏠 Home</Link></li>
+            <li><Link className="nav-links" to='/about'>📙 About</Link></li>
+            <li><Link className="nav-links" to='/contact'>📱 Contact</Link></li>
+            <li><Link className="nav-links" to='cart'>🛒 Cart</Link></li>
           </ul>
         </div>
   
