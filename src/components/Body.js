@@ -39,7 +39,7 @@ const Body = ()=>{
                 setSearchText(e.target.value)
                 let data = filterData(e.target.value, allRestaurants);
                 setRestaurants(data);
-                }} className="search-input" placeholder="search"/>
+                }} className="search-input" placeholder="Search for restaurant"/>
             <button className="search-btn" onClick={()=>{
                
             }}>Search</button>

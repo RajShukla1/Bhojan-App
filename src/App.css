@@ -30,10 +30,23 @@
   width: 150px;
   text-decoration: none;
 }
+.search-container{
+  display: flex;
+  justify-content: center;
+}
 .search-input{
   width: 500px;
-  height: 50px;
+  height: 35px;
   font-size: xx-large;
+  padding: 5px;
+}
+.search-btn{
+  width: 100px;
+  height: 48px;
+  font-size: x-large;
+  font-weight: 100;
+  padding: 5px;
+  color: darkgray;
 }
 .card{
   padding: 10px;
@@ -52,6 +65,7 @@
 .restaurant-list{
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 .shimmer>.img{
   width: 200px;
