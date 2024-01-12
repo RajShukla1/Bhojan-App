@@ -32,12 +32,12 @@
 .shimmer>.img{
   width: 200px;
   height: 200px;
-  background-color:rgb(215 215 215 / 25%);
+  background-color:rgba(59, 55, 55, 0.153);
   margin: 5px;
 }
 .shimmer>h1{
   width: 200px;
   height: 20px;
-  background-color: rgb(215 215 215 / 25%);
+  background-color: rgba(59, 55, 55, 0.153);
   margin: 5px;
 }

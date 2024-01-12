@@ -18,8 +18,9 @@ const Body = ()=>{
       try{
         let data = await fetch(API);
         let json = await data.json();
-        setAllRestaurants(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
-        setRestaurants(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
+        console.log(json );
+        setAllRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
+        setRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
         console.log(restaurants);
         console.log(typeof restaurants);
       }catch(e){
@@ -44,7 +45,6 @@ const Body = ()=>{
             }}>Search</button>
         </div>
       <div className='restaurant-list'>
-        {console.log(restaurants)}
       {
         restaurants?.length === 0 ? <h1>No result found...</h1> :  restaurants?.map((restaurant, i)=><RestaurantCard key={i} {...restaurant?.info } />)
       }
