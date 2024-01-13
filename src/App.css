@@ -70,12 +70,20 @@
 .shimmer>.img{
   width: 200px;
   height: 200px;
+  border-radius: 50%;
   background-color:rgba(59, 55, 55, 0.153);
   margin: 5px;
 }
-.shimmer>h1{
+a{
+  text-decoration: none;
+  color: black;
+}
+.shimmer>h1,h3{
   width: 200px;
-  height: 20px;
   background-color: rgba(59, 55, 55, 0.153);
   margin: 5px;
+}
+.menu-item{
+  width: 100px;
+  height: 100px;
 }

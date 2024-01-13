@@ -21,8 +21,6 @@ const Body = ()=>{
         console.log(json );
         setAllRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
         setRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
-        console.log(restaurants);
-        console.log(typeof restaurants);
       }catch(e){
         console.log(e);
       }
