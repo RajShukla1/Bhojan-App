@@ -1,5 +1,5 @@
 const Footer = ()=>{
-    return (<h1>Foooter</h1>)
+    return (<h1>©rajshukla</h1>)
   }
 
   export default Footer;

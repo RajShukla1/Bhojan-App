@@ -54,6 +54,7 @@
   display: flex;
   flex-direction: column;
   box-shadow: 5px 5px 5px 5px whitesmoke;
+  width: 275px;
   /* align-items: center; */
 }
 .card > img{
@@ -78,12 +79,62 @@ a{
   text-decoration: none;
   color: black;
 }
-.shimmer>h1,h3{
+.restaurant-menu{
+  display: flex;
+  justify-content: space-around;
+}
+.restaurant-details{
+  box-shadow: 4px 4px 4px rgb(158, 155, 155);
+  padding: 20px;
+  height: max-content;
+}
+.shimmer>h1{
   width: 200px;
   background-color: rgba(59, 55, 55, 0.153);
   margin: 5px;
 }
-.menu-item{
+.menu-recommended{
+  text-align: center;
+}
+h1,h3,h4,h5{
+  line-height: 0px;
+}
+h1{
+  padding: 10px;
+}
+.menu-card{
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  margin: 10px;
+  box-shadow: 5px 5px 5px;
+  padding: 10px;
+}
+.menu-img{
   width: 100px;
   height: 100px;
+  border-radius: 20%;
+  border: 1px solid green;
+}
+
+.menu-name{
+  width: 400px;
+}
+.restaurant-details > img{
+  width: 400px;
+  height: 400px;
+  border-radius: 30%;
+  border: 2px solid green;
+}
+.veg{
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.about-page{
+  margin: auto;
+  padding: 20px;
+  width: 70%;
+  box-shadow: 5px 5px 5px;
 }
