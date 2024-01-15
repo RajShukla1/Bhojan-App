@@ -1,14 +1,9 @@
 import { useState } from "react";
 import RestaurantCard from "./RestaurantCard";
-import { API, restaurantList } from "./constants";
+import { API, restaurantList, filterData } from "./constants";
 import { useEffect } from "react";
 import Shimmer from "./Shimmer";
 
-const filterData = (searchText,restaurants) =>{
-        // let restaurants = restaurantList;
-        restaurants = restaurants.filter((restaurant)=>restaurant?.info?.name?.toLowerCase()?.includes(searchText.toLowerCase()));
-        return restaurants;
-}
 const Body = ()=>{
     const [searchText, setSearchText] = useState('');
     const [allRestaurants, setAllRestaurants] = useState([]);
@@ -35,7 +30,7 @@ const Body = ()=>{
         <div className="search-container">
             <input type="text" value={searchText} onChange={(e)=>{
                 setSearchText(e.target.value)
-                let data = filterData(e.target.value, allRestaurants);
+                let data = filterData(e.target.value, allRestaurants, 'home');
                 setRestaurants(data);
                 }} className="search-input" placeholder="Search for restaurant"/>
             <button className="search-btn" onClick={()=>{

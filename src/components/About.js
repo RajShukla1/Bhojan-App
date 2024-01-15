@@ -3,7 +3,7 @@ import React from 'react'
 const About = () => {
   return (
     <div className='about-page'>
-      <h3>Welcome to Bhojan-App, a cutting-edge React-based frontend project that brings the convenience and innovation of Swiggy's live API to the world of online food ordering. Bhojan, the Sanskrit word for "meal," reflects our commitment to delivering a seamless and delightful dining experience to our users.</h3>
+      <p className='welcome-about-page'>Welcome to Bhojan-App, a cutting-edge React-based frontend project that brings the convenience and innovation of Swiggy's live API to the world of online food ordering. Bhojan, the Sanskrit word for "meal", reflects our commitment to delivering a seamless and delightful dining experience to our users.</p>
 
       <h1>Our Mission:</h1>
       <p>At Bhojan-App, our mission is to revolutionize the way you experience food delivery. We leverage Swiggy's live API to provide real-time access to a diverse range of restaurants, ensuring that you can discover, order, and enjoy your favorite meals with just a few clicks.</p>

@@ -136,5 +136,15 @@ h1{
   margin: auto;
   padding: 20px;
   width: 70%;
-  box-shadow: 5px 5px 5px;
+  box-shadow: 5px px 5px 5px;
+}
+.welcome-about-page{
+  font-weight: 400;
+  font-size: x-large;
+}
+.search-input-menu{
+  width: 300px;
+  height: 35px;
+  font-size: x-large;
+  padding: 5px;
 }
