@@ -3,10 +3,13 @@ export const RESTAURANT_API ="https://www.swiggy.com/dapi/menu/pl?page-type=REGU
 export const IMG_CON_URL ='https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/' ;
 export const filterData = (searchText,restaurants,page) =>{
   // let restaurants = restaurantList;
+  console.log(restaurants);
+  console.log(searchText);
   if(page === 'home')
   restaurants = restaurants.filter((restaurant)=>restaurant?.info?.name?.toLowerCase()?.includes(searchText.toLowerCase()));
   if(page === 'menu')
-  restaurants = restaurants.filter((restaurant)=>restaurant?.card?.info?.name?.toLowerCase()?.includes(searchText.toLowerCase()));
+    restaurants = restaurants.filter((restaurant)=>restaurant?.card?.info?.name?.toLowerCase()?.includes(searchText.toLowerCase()))
+    console.log(restaurants);
   return restaurants;
 }
 export const restaurantList = [{

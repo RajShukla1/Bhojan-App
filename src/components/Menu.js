@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { IMG_CON_URL } from './constants'
 
 const Menu = ({info}) => {
+  console.log('in menu');
     let {name, isVeg, category, imageId, price, ratings, showImage} = info;
   return (
     <div className='menu-card'>
