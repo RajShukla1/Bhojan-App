@@ -16,6 +16,7 @@ const RestaurantMenu = () => {
     const [restaurant,setRestaurant] = useState({});
     const [subMenu, setSubMenu] = useState([]);
     const [menu, setMenu] = useState([]);
+    const [isVegOnly, setIsVegOnly] = useState(false);
     console.log(fetch(RESTAURANT_API));
     useEffect(()=>{
         getRestaurantInfo();
@@ -55,7 +56,14 @@ const RestaurantMenu = () => {
         {/* <p>{restaurant?.expectationNotifiers[0]?.text}</p> */}
         </div>
         <div>
-          <button type='boolean' onClick={()=>setMenu(vegOnly(menu))}>Veg Only</button>
+        <label className="switch">
+          <input type="checkbox"
+               id="switch"
+               className="checkbox"
+               onChange={(e)=>e.target.checked ?setMenu(vegOnly(menu)):setMenu(subMenu)} />
+               <span class="slider round"></span>
+</label>
+          <label >Veg Only</label>
           <div className="search-container">
             <input type="text" value={searchText} onChange={(e)=>{
                 setSearchText(e.target.value)
