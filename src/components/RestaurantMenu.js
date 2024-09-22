@@ -26,18 +26,13 @@ const RestaurantMenu = () => {
         let json = await data.json();
         console.log(json);
         console.log(json?.data?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards[1]?.card?.card?.itemCards);
-        setRestaurant(json?.data?.cards[0]?.card?.card?.info);
-        // console.log(json?.data?.cards?.filter((elem)=>elem?.groupedCard));
-        // console.log(json?.data?.cards?.filter((elem)=>elem?.groupedCard)[0]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.filter((el)=>el.card?.card?.itemCards));
-        // setMenu(json?.data?.cards?.filter((elem)=>elem?.groupedCard)[0]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.filter((el)=>el.card?.card?.itemCards)[0]?.card?.card?.itemCards);
-        // setSubMenu(json?.data?.cards?.filter((elem)=>elem?.groupedCard)[0]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.filter((el)=>el.card?.card?.itemCards));  
-        // console.log('subemnu',subMenu);
-        console.log(restaurant);
+        setRestaurant(json?.data?.cards[2]?.card?.card?.info);
         let arr = [];
         json?.data?.cards?.filter((elem)=>elem?.groupedCard)[0]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.filter((el)=>el.card?.card?.itemCards)?.forEach(element => {
           console.log(element?.card?.card?.itemCards);
           arr = [...arr,...element?.card?.card?.itemCards];
         });
+        console.log([...arr]);
         setMenu([...arr]);
         setSubMenu([...arr]);
         // setMenu(json?.data?.cards?.filter((elem)=>elem?.groupedCard)[0]?.groupedCard?.cardGroupMap?.REGULAR?.cards?.filter((el)=>el.card?.card?.itemCards).map((el,i)=>el?.card?.card?.title));
