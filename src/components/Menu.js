@@ -11,7 +11,7 @@ const Menu = ({info}) => {
           {isVeg ?<span className='veg' style={{backgroundColor:"green"}}></span>:<div className='veg' style={{backgroundColor:"red"}}></div>}
         <p className='menu-name'>{name}</p>
         <p>{price?'₹'+price/100:''}</p>
-        <p>{ratings?.aggregatedRating?.rating}⭐ {category}</p>
+        <p>{ratings?.aggregatedRating?.rating}✰ {category}</p>
         </div>
     </div>
   )
