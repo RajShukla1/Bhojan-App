@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { IMG_CON_URL, RESTAURANT_API } from './constants';
 import Menu from './Menu';
 import { filterData } from './constants';
+import Shimmer from './Shimmer';
 
 const vegOnly = (menu)=>{
   console.log(menu);
@@ -39,7 +40,7 @@ const RestaurantMenu = () => {
         console.log('menu====',menu);
     }
     console.log('in rest menu');
-  return ( Object.keys(restaurant).length ===0 ?'':
+  return ( Object.keys(restaurant).length ===0 ?<Shimmer/>:
     <>
     <div className='restaurant-menu'>
       <div className='restaurant-details'>
