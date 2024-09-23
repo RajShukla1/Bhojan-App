@@ -35,7 +35,7 @@ a{
   margin-top: 10px;
 }
 .restaurant-details{
-  /* /* box-shadow: 4px 4px 4px rgb(158, 155, 155); */
+  box-shadow: 4px 4px 4px rgb(158, 155, 155);
   padding: 20px; 
   display: flex;
   height: max-content;
@@ -53,14 +53,7 @@ a{
 }
 .card h1{
   padding: 10px;
-} */
-
-/* .restaurant-details > img{
-  width: 400px;
-  height: 400px;
-  border-radius: 30%;
-  border: 2px solid green;
-} */
+}
 
 .about-page{
   margin: auto;
