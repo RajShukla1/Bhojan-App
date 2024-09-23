@@ -50,7 +50,7 @@ const RestaurantMenu = () => {
         <h3>{restaurant?.areaName}</h3>
         {/* <p>{restaurant?.expectationNotifiers[0]?.text}</p> */}
         </div>
-        <div>
+        <div className='left-container'>
         <label className="switch">
           <input type="checkbox"
                id="switch"
