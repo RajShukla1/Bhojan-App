@@ -1,12 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import RestaurantCard from './RestaurantCard';
 import {
   PROXY_API,
   DIRECT_API,
   restaurantList,
   filterData,
+  getAllDishes,
+  IMG_CON_URL,
 } from './constants';
 import Shimmer from './Shimmer';
+import { useCart } from '../context/CartContext';
+
+const QUICK_CUISINE_CHIPS = [
+  { label: '🍕 Pizza', query: 'Pizza', mode: 'dishes' },
+  { label: '🍗 Biryani', query: 'Biryani', mode: 'dishes' },
+  { label: '🍔 Burger', query: 'Burger', mode: 'dishes' },
+  { label: '🍛 Paneer', query: 'Paneer', mode: 'dishes' },
+  { label: '🍰 Waffles', query: 'Waffle', mode: 'dishes' },
+  { label: '⭐ Top Rated', filter: 'topRated', mode: 'restaurants' },
+  { label: '🌱 Pure Veg', filter: 'pureVeg', mode: 'restaurants' },
+];
 
 const Body = () => {
   const [searchText, setSearchText] = useState('');
@@ -15,6 +29,9 @@ const Body = () => {
   const [loading, setLoading] = useState(true);
   const [apiSource, setApiSource] = useState('loading'); // 'live' | 'mock' | 'loading'
   const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTab, setSearchTab] = useState('restaurants'); // 'restaurants' | 'dishes'
+
+  const { addToCart, removeFromCart, getItemQuantity } = useCart();
 
   // Extract restaurants from Swiggy's dynamic cards structure
   const extractRestaurantsFromCards = (cards) => {
@@ -94,7 +111,57 @@ const Body = () => {
     getRestaurants();
   }, [getRestaurants]);
 
-  // Handle Search
+  // All dishes for dish-level universal search
+  const allDishes = useMemo(() => {
+    return getAllDishes(allRestaurants);
+  }, [allRestaurants]);
+
+  // Filtered dishes
+  const filteredDishes = useMemo(() => {
+    let result = allDishes;
+    const query = searchText.trim().toLowerCase();
+    if (query) {
+      result = result.filter((dish) => {
+        const name = (dish.name || '').toLowerCase();
+        const desc = (dish.description || '').toLowerCase();
+        const cat = (dish.category || '').toLowerCase();
+        const resto = (dish.restaurantName || '').toLowerCase();
+        return (
+          name.includes(query) ||
+          desc.includes(query) ||
+          cat.includes(query) ||
+          resto.includes(query)
+        );
+      });
+    }
+
+    if (activeFilter === 'pureVeg') {
+      result = result.filter((dish) => dish.isVeg === 1 || dish.isVeg === true);
+    }
+    return result;
+  }, [allDishes, searchText, activeFilter]);
+
+  // Filter application pipeline for restaurants
+  const applyCurrentFilter = (baseList, filterType) => {
+    let result = baseList;
+    if (filterType === 'topRated') {
+      result = baseList.filter((r) => Number(r?.info?.avgRating || 0) >= 4.2);
+    } else if (filterType === 'fastDelivery') {
+      result = baseList.filter(
+        (r) => Number(r?.info?.sla?.deliveryTime || 99) <= 35
+      );
+    } else if (filterType === 'pureVeg') {
+      result = baseList.filter((r) => r?.info?.veg === true);
+    } else if (filterType === 'costLow') {
+      result = baseList.filter((r) => {
+        const costStr = r?.info?.costForTwo || '';
+        const match = costStr.match(/\d+/);
+        return match ? Number(match[0]) <= 300 : true;
+      });
+    }
+    setRestaurants(result);
+  };
+
   const handleSearch = () => {
     const filtered = filterData(searchText, allRestaurants, 'home');
     applyCurrentFilter(filtered, activeFilter);
@@ -122,35 +189,12 @@ const Body = () => {
     applyCurrentFilter(allRestaurants, activeFilter);
   };
 
-  // Filter handlers
-  const applyCurrentFilter = (baseList, filterType) => {
-    let result = baseList;
-    if (filterType === 'topRated') {
-      result = baseList.filter((r) => Number(r?.info?.avgRating || 0) >= 4.2);
-    } else if (filterType === 'fastDelivery') {
-      result = baseList.filter(
-        (r) => Number(r?.info?.sla?.deliveryTime || 99) <= 35
-      );
-    } else if (filterType === 'pureVeg') {
-      result = baseList.filter((r) => r?.info?.veg === true);
-    } else if (filterType === 'costLow') {
-      result = baseList.filter((r) => {
-        const costStr = r?.info?.costForTwo || '';
-        const match = costStr.match(/\d+/);
-        return match ? Number(match[0]) <= 300 : true;
-      });
-    }
-    setRestaurants(result);
-  };
-
   const handleFilterClick = (filterType) => {
     const nextFilter = activeFilter === filterType ? 'all' : filterType;
     setActiveFilter(nextFilter);
-
     const baseList = searchText.trim()
       ? filterData(searchText, allRestaurants, 'home')
       : allRestaurants;
-
     applyCurrentFilter(baseList, nextFilter);
   };
 
@@ -158,6 +202,23 @@ const Body = () => {
     setSearchText('');
     setActiveFilter('all');
     setRestaurants(allRestaurants);
+  };
+
+  const handleQuickChipClick = (chip) => {
+    if (chip.query) {
+      setSearchText(chip.query);
+      setSearchTab(chip.mode || 'dishes');
+      const filtered = filterData(chip.query, allRestaurants, 'home');
+      applyCurrentFilter(filtered, activeFilter);
+    } else if (chip.filter) {
+      handleFilterClick(chip.filter);
+      if (chip.mode) setSearchTab(chip.mode);
+    }
+  };
+
+  const getDishPrice = (priceVal) => {
+    if (!priceVal) return 199;
+    return priceVal > 1000 ? Math.round(priceVal / 100) : priceVal;
   };
 
   return (
@@ -192,7 +253,7 @@ const Body = () => {
       {/* Hero / Search Section */}
       <div className="hero-banner">
         <h1 className="hero-title">Great food options delivered fast to you</h1>
-        <p className="hero-subtitle">Discover top rated restaurants in Lucknow</p>
+        <p className="hero-subtitle">Discover top rated restaurants & dishes in Lucknow</p>
 
         <div className="search-box">
           <span className="search-icon">🔍</span>
@@ -202,7 +263,7 @@ const Body = () => {
             onChange={handleSearchChange}
             onKeyDown={handleSearchKeyDown}
             className="search-input"
-            placeholder="Search by restaurant name, cuisine, or locality..."
+            placeholder="Search for restaurants, cuisines, pizzas, biryani, desserts..."
           />
           {searchText && (
             <button className="clear-btn" onClick={clearSearch}>
@@ -211,6 +272,42 @@ const Body = () => {
           )}
           <button className="search-btn" onClick={handleSearch}>
             Search
+          </button>
+        </div>
+
+        {/* Quick Suggestion Chips */}
+        <div className="quick-suggestions-chips">
+          <span className="quick-chip-label">Popular:</span>
+          {QUICK_CUISINE_CHIPS.map((chip, idx) => (
+            <button
+              key={idx}
+              className="quick-chip"
+              onClick={() => handleQuickChipClick(chip)}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Search Mode Tabs: Restaurants vs Dishes */}
+      <div className="search-mode-tabs-container">
+        <div className="search-mode-tabs">
+          <button
+            className={`search-mode-tab ${
+              searchTab === 'restaurants' ? 'active' : ''
+            }`}
+            onClick={() => setSearchTab('restaurants')}
+          >
+            🏪 Restaurants ({restaurants.length})
+          </button>
+          <button
+            className={`search-mode-tab ${
+              searchTab === 'dishes' ? 'active' : ''
+            }`}
+            onClick={() => setSearchTab('dishes')}
+          >
+            🍲 Dishes ({filteredDishes.length})
           </button>
         </div>
       </div>
@@ -222,7 +319,7 @@ const Body = () => {
             className={`filter-chip ${activeFilter === 'all' ? 'active' : ''}`}
             onClick={() => handleFilterClick('all')}
           >
-            All Restaurants
+            All
           </button>
           <button
             className={`filter-chip ${
@@ -265,35 +362,178 @@ const Body = () => {
         )}
       </div>
 
-      {/* Results Header */}
-      <div className="results-header">
-        <h2 className="results-count">
-          {restaurants.length} {restaurants.length === 1 ? 'Restaurant' : 'Restaurants'} available
-        </h2>
-      </div>
-
-      {/* Restaurant List or Shimmer */}
+      {/* Main Content: Restaurant View OR Dish Search View */}
       {loading ? (
         <Shimmer />
-      ) : restaurants.length === 0 ? (
-        <div className="no-results-card">
-          <span className="no-results-icon">🍽️</span>
-          <h2>No matching restaurants found</h2>
-          <p>
-            We couldn't find any restaurants matching your search criteria. Try a different search or clear your filters!
-          </p>
-          <button className="reset-btn" onClick={resetAllFilters}>
-            Show All Restaurants
-          </button>
+      ) : searchTab === 'dishes' ? (
+        /* Dishes Results Grid */
+        <div className="dishes-results-container">
+          <div className="results-header">
+            <h2 className="results-count">
+              Found {filteredDishes.length}{' '}
+              {filteredDishes.length === 1 ? 'Dish' : 'Dishes'}
+              {searchText ? ` matching "${searchText}"` : ' ready for delivery'}
+            </h2>
+          </div>
+
+          {filteredDishes.length === 0 ? (
+            <div className="no-results-card">
+              <span className="no-results-icon">🍲</span>
+              <h2>No dishes found</h2>
+              <p>
+                We couldn't find any dish matching "{searchText}". Try searching for Pizza, Biryani, Waffle, or Burger!
+              </p>
+              <button
+                className="reset-btn"
+                onClick={() => {
+                  setSearchText('');
+                  setActiveFilter('all');
+                }}
+              >
+                Clear Search
+              </button>
+            </div>
+          ) : (
+            <div className="dishes-grid">
+              {filteredDishes.map((dish) => {
+                const price = getDishPrice(dish.price || dish.defaultPrice);
+                const qty = getItemQuantity(dish.id);
+                const imageUrl = dish.imageId
+                  ? IMG_CON_URL + dish.imageId
+                  : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60';
+
+                return (
+                  <div key={dish.id} className="dish-search-card">
+                    <div className="dish-card-img-wrapper">
+                      <img
+                        src={imageUrl}
+                        alt={dish.name}
+                        className="dish-card-img"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60';
+                        }}
+                      />
+                      <span
+                        className={`dish-diet-badge ${
+                          dish.isVeg ? 'veg' : 'non-veg'
+                        }`}
+                      >
+                        ● {dish.isVeg ? 'Veg' : 'Non-Veg'}
+                      </span>
+                    </div>
+
+                    <div className="dish-card-content">
+                      <div className="dish-restaurant-attribution">
+                        <Link
+                          to={`/restaurant/${dish.restaurantId}`}
+                          className="dish-restaurant-link"
+                          title="View restaurant menu"
+                        >
+                          By {dish.restaurantName} • ★ {dish.restaurantRating}
+                        </Link>
+                        <span className="dish-sla-tag">
+                          ⏱️ {dish.restaurantSla}
+                        </span>
+                      </div>
+
+                      <h3 className="dish-title">{dish.name}</h3>
+
+                      <p className="dish-description">
+                        {dish.description ||
+                          `Fresh and authentic preparation crafted with house spices.`}
+                      </p>
+
+                      <div className="dish-card-bottom-row">
+                        <span className="dish-price-tag">₹{price}</span>
+
+                        {qty === 0 ? (
+                          <button
+                            className="dish-add-btn"
+                            onClick={() =>
+                              addToCart({
+                                id: dish.id,
+                                name: dish.name,
+                                price,
+                                imageId: dish.imageId,
+                                isVeg: dish.isVeg,
+                                description: dish.description,
+                                restaurantId: dish.restaurantId,
+                                restaurantName: dish.restaurantName,
+                              })
+                            }
+                          >
+                            + ADD
+                          </button>
+                        ) : (
+                          <div className="dish-stepper-btn">
+                            <button
+                              onClick={() => removeFromCart(dish.id)}
+                              className="dish-step-minus"
+                            >
+                              −
+                            </button>
+                            <span className="dish-step-qty">{qty}</span>
+                            <button
+                              onClick={() =>
+                                addToCart({
+                                  id: dish.id,
+                                  name: dish.name,
+                                  price,
+                                  imageId: dish.imageId,
+                                  isVeg: dish.isVeg,
+                                  description: dish.description,
+                                  restaurantId: dish.restaurantId,
+                                  restaurantName: dish.restaurantName,
+                                })
+                              }
+                              className="dish-step-plus"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       ) : (
-        <div className="restaurant-list">
-          {restaurants.map((restaurant, i) => (
-            <RestaurantCard
-              key={restaurant?.info?.id || i}
-              {...restaurant?.info}
-            />
-          ))}
+        /* Restaurants List */
+        <div className="restaurants-results-container">
+          <div className="results-header">
+            <h2 className="results-count">
+              {restaurants.length}{' '}
+              {restaurants.length === 1 ? 'Restaurant' : 'Restaurants'} available
+            </h2>
+          </div>
+
+          {restaurants.length === 0 ? (
+            <div className="no-results-card">
+              <span className="no-results-icon">🍽️</span>
+              <h2>No matching restaurants found</h2>
+              <p>
+                We couldn't find any restaurants matching your search criteria.
+                Try searching in Dishes or clear your filters!
+              </p>
+              <button className="reset-btn" onClick={resetAllFilters}>
+                Show All Restaurants
+              </button>
+            </div>
+          ) : (
+            <div className="restaurant-list">
+              {restaurants.map((restaurant, i) => (
+                <RestaurantCard
+                  key={restaurant?.info?.id || i}
+                  {...restaurant?.info}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

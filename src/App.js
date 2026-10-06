@@ -6,21 +6,25 @@ import { Outlet, createBrowserRouter } from 'react-router-dom';
 import About from './components/About';
 import Contact from './components/Contact';
 import Cart from './components/Cart';
+import Orders from './components/Orders';
 import Error from './components/Error';
 import RestaurantMenu from './components/RestaurantMenu';
 import { CartProvider } from './context/CartContext';
+import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
-    <CartProvider>
-      <div className="app-container">
-        <Header />
-        <main className="app-main">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </CartProvider>
+    <UserProvider>
+      <CartProvider>
+        <div className="app-container">
+          <Header />
+          <main className="app-main">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      </CartProvider>
+    </UserProvider>
   );
 }
 
@@ -33,6 +37,10 @@ export const appRouter = createBrowserRouter([
       {
         path: '/',
         element: <Body />,
+      },
+      {
+        path: '/orders',
+        element: <Orders />,
       },
       {
         path: '/about',

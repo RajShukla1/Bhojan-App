@@ -21,7 +21,8 @@ const RestaurantMenu = () => {
   const [filteredMenu, setFilteredMenu] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [isVegOnly, setIsVegOnly] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState('');
+  const [collapsedCategories, setCollapsedCategories] = useState({});
   const [loading, setLoading] = useState(true);
   const [menuSource, setMenuSource] = useState('live'); // 'live' | 'fallback'
 
@@ -121,19 +122,9 @@ const RestaurantMenu = () => {
     getRestaurantInfo();
   }, [getRestaurantInfo]);
 
-  // Extract unique categories
-  const categories = useMemo(() => {
-    const set = new Set();
-    allMenuItems.forEach((elem) => {
-      const cat = elem?.card?.info?.category;
-      if (cat) set.add(cat);
-    });
-    return ['All', ...Array.from(set)];
-  }, [allMenuItems]);
-
   // Filter application pipeline
   const applyFilters = useCallback(
-    (query, vegToggle, cat) => {
+    (query, vegToggle) => {
       let result = allMenuItems;
 
       // Filter by veg
@@ -141,13 +132,6 @@ const RestaurantMenu = () => {
         result = result.filter(
           (elem) =>
             elem?.card?.info?.isVeg === 1 || elem?.card?.info?.isVeg === true
-        );
-      }
-
-      // Filter by category
-      if (cat && cat !== 'All') {
-        result = result.filter(
-          (elem) => elem?.card?.info?.category === cat
         );
       }
 
@@ -164,23 +148,57 @@ const RestaurantMenu = () => {
   const handleSearchChange = (e) => {
     const val = e.target.value;
     setSearchText(val);
-    applyFilters(val, isVegOnly, selectedCategory);
+    applyFilters(val, isVegOnly);
   };
 
   const handleVegToggle = (e) => {
     const checked = e.target.checked;
     setIsVegOnly(checked);
-    applyFilters(searchText, checked, selectedCategory);
-  };
-
-  const handleCategorySelect = (cat) => {
-    setSelectedCategory(cat);
-    applyFilters(searchText, isVegOnly, cat);
+    applyFilters(searchText, checked);
   };
 
   const clearMenuSearch = () => {
     setSearchText('');
-    applyFilters('', isVegOnly, selectedCategory);
+    applyFilters('', isVegOnly);
+  };
+
+  // Group items by category
+  const groupedMenu = useMemo(() => {
+    const groups = {};
+    filteredMenu.forEach((elem) => {
+      const cat = elem?.card?.info?.category || 'Chef Recommendations';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(elem);
+    });
+    return groups;
+  }, [filteredMenu]);
+
+  const categories = useMemo(() => Object.keys(groupedMenu), [groupedMenu]);
+
+  // Initialize activeCategory to first category
+  useEffect(() => {
+    if (categories.length > 0 && !activeCategory) {
+      setActiveCategory(categories[0]);
+    }
+  }, [categories, activeCategory]);
+
+  const scrollToCategory = (categoryName) => {
+    setActiveCategory(categoryName);
+    const elementId = `cat-section-${categoryName.replace(/[^a-zA-Z0-9]/g, '-')}`;
+    const el = document.getElementById(elementId);
+    if (el) {
+      // Offset for sticky headers
+      const yOffset = -130;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const toggleCategoryCollapse = (categoryName) => {
+    setCollapsedCategories((prev) => ({
+      ...prev,
+      [categoryName]: !prev[categoryName],
+    }));
   };
 
   if (loading) {
@@ -271,31 +289,31 @@ const RestaurantMenu = () => {
         </div>
       </div>
 
-      {/* Category Pills */}
-      {categories.length > 2 && (
-        <div className="category-pills-bar">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={`category-pill ${
-                selectedCategory === cat ? 'active' : ''
-              }`}
-              onClick={() => handleCategorySelect(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+      {/* Sticky In-Menu Category Navigation Bar */}
+      {categories.length > 1 && (
+        <div className="sticky-category-navbar">
+          <div className="sticky-category-scroll-container">
+            {categories.map((cat) => {
+              const count = groupedMenu[cat]?.length || 0;
+              return (
+                <button
+                  key={cat}
+                  className={`sticky-cat-pill ${
+                    activeCategory === cat ? 'active' : ''
+                  }`}
+                  onClick={() => scrollToCategory(cat)}
+                >
+                  <span className="cat-name">{cat}</span>
+                  <span className="cat-badge">{count}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* Menu Items List */}
+      {/* Categorized Menu Items Section */}
       <div className="menu-items-section">
-        <div className="menu-section-header">
-          <h2>
-            Menu Items ({filteredMenu.length})
-          </h2>
-        </div>
-
         {filteredMenu.length === 0 ? (
           <div className="no-items-state">
             <span className="no-items-icon">🍲</span>
@@ -306,7 +324,6 @@ const RestaurantMenu = () => {
               onClick={() => {
                 setSearchText('');
                 setIsVegOnly(false);
-                setSelectedCategory('All');
                 setFilteredMenu(allMenuItems);
               }}
             >
@@ -314,13 +331,58 @@ const RestaurantMenu = () => {
             </button>
           </div>
         ) : (
-          <div className="menu-items-list">
-            {filteredMenu.map((elem, i) => (
-              <Menu
-                key={elem?.card?.info?.id || i}
-                info={elem?.card?.info}
-              />
-            ))}
+          <div className="categorized-sections-wrapper">
+            {categories.map((categoryName) => {
+              const items = groupedMenu[categoryName] || [];
+              const isCollapsed = collapsedCategories[categoryName] || false;
+              const safeCatId = `cat-section-${categoryName.replace(
+                /[^a-zA-Z0-9]/g,
+                '-'
+              )}`;
+
+              return (
+                <div
+                  key={categoryName}
+                  id={safeCatId}
+                  className="menu-category-block"
+                >
+                  {/* Category Header with Accordion Toggle */}
+                  <div
+                    className="menu-category-header"
+                    onClick={() => toggleCategoryCollapse(categoryName)}
+                  >
+                    <div className="category-title-wrap">
+                      <h2 className="category-heading">{categoryName}</h2>
+                      <span className="category-items-count-badge">
+                        {items.length} {items.length === 1 ? 'item' : 'items'}
+                      </span>
+                    </div>
+                    <span className="category-accordion-arrow">
+                      {isCollapsed ? '▼' : '▲'}
+                    </span>
+                  </div>
+
+                  {/* Category Items List */}
+                  {!isCollapsed && (
+                    <div className="menu-items-list">
+                      {items.map((elem, i) => {
+                        const enhancedInfo = {
+                          ...elem?.card?.info,
+                          restaurantId: restaurant?.id,
+                          restaurantName: restaurant?.name,
+                        };
+                        return (
+                          <Menu
+                            key={elem?.card?.info?.id || i}
+                            info={enhancedInfo}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

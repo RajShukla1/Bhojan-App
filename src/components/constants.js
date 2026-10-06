@@ -1231,3 +1231,79 @@ export const getFallbackMenu = (restaurantId, restaurantInfo) => {
     },
   ];
 };
+
+export const AVAILABLE_COUPONS = [
+  {
+    code: 'BHOJAN50',
+    type: 'percent',
+    discountPercent: 50,
+    maxDiscount: 100,
+    minOrder: 199,
+    description: '50% OFF up to ₹100 on orders above ₹199',
+    badge: 'Trending Deal',
+    icon: '🔥',
+  },
+  {
+    code: 'WELCOME20',
+    type: 'percent',
+    discountPercent: 20,
+    maxDiscount: 150,
+    minOrder: 299,
+    description: '20% OFF up to ₹150 on orders above ₹299',
+    badge: 'Welcome Offer',
+    icon: '🎉',
+  },
+  {
+    code: 'FREEDEL',
+    type: 'flat',
+    flatDiscount: 35,
+    minOrder: 149,
+    description: 'FREE Delivery! Flat ₹35 discount on delivery fee',
+    badge: 'Free Delivery',
+    icon: '🛵',
+  },
+  {
+    code: 'FEAST120',
+    type: 'flat',
+    flatDiscount: 120,
+    minOrder: 499,
+    description: 'Flat ₹120 OFF on jumbo orders above ₹499',
+    badge: 'Jumbo Savings',
+    icon: '👑',
+  },
+];
+
+export const getAllDishes = (customRestaurants) => {
+  const sourceRestaurants =
+    customRestaurants && customRestaurants.length > 0
+      ? customRestaurants
+      : restaurantList;
+  const dishes = [];
+  const seenIds = new Set();
+
+  sourceRestaurants.forEach((res) => {
+    const resInfo = res?.info || res;
+    const resId = resInfo?.id;
+    if (!resId) return;
+
+    const menu = getFallbackMenu(resId, resInfo);
+    if (Array.isArray(menu)) {
+      menu.forEach((item) => {
+        const itemInfo = item?.card?.info;
+        if (itemInfo && !seenIds.has(itemInfo.id)) {
+          seenIds.add(itemInfo.id);
+          dishes.push({
+            ...itemInfo,
+            restaurantId: resId,
+            restaurantName: resInfo?.name || 'Partner Restaurant',
+            restaurantArea: resInfo?.areaName || resInfo?.locality || 'Lucknow',
+            restaurantRating: resInfo?.avgRating || '4.2',
+            restaurantSla: resInfo?.sla?.slaString || '25-35 mins',
+          });
+        }
+      });
+    }
+  });
+
+  return dishes;
+};
