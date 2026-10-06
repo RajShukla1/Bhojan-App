@@ -1,44 +1,73 @@
 import React from 'react';
-import './../App.css';
+import { Link } from 'react-router-dom';
 
 const About = () => {
   return (
-    <div className="about-container">
-      <section className="about-intro">
-        <p className="about-welcome">
-          Welcome to <strong>Bhojan-App</strong>, a cutting-edge React-based frontend project that brings the convenience and innovation of Swiggy's live API to the world of online food ordering. <strong>Bhojan</strong>, the Sanskrit word for "meal", reflects our commitment to delivering a seamless and delightful dining experience to our users.
+    <div className="about-page-wrapper">
+      <div className="about-hero-section">
+        <span className="about-tag">About The Project</span>
+        <h1 className="about-main-title">
+          Bhojan — Modern Food Delivery Web App
+        </h1>
+        <p className="about-main-subtitle">
+          Engineered with modern React architecture, live Swiggy API proxying, and responsive UI components.
         </p>
-      </section>
+      </div>
 
-      <section className="about-section">
-        <h1>Our Mission</h1>
-        <p>
-          At <strong>Bhojan-App</strong>, our mission is to revolutionize the way you experience food delivery. We leverage Swiggy's live API to provide real-time access to a diverse range of restaurants, ensuring that you can discover, order, and enjoy your favorite meals with just a few clicks.
-        </p>
-      </section>
+      <div className="about-content-grid">
+        <div className="about-feature-card">
+          <div className="feature-icon">⚡</div>
+          <h3>CORS-Safe Swiggy API Integration</h3>
+          <p>
+            Uses Webpack Dev Server reverse proxying with custom headers and resilient fallback datasets to overcome browser cross-origin restrictions seamlessly.
+          </p>
+        </div>
 
-      <section className="about-section">
-        <h1>Key Features</h1>
-        <ul>
-          <li>
-            <strong>Real-time Menu Updates:</strong> Our integration with Swiggy's live API ensures that you always have the latest and most accurate menu information at your fingertips.
-          </li>
-          <li>
-            <strong>Intuitive User Interface:</strong> We have crafted a user-friendly interface that simplifies the ordering process, making it easy for you to explore different cuisines and dishes effortlessly.
-          </li>
-          <li>
-            <strong>Personalized Recommendations:</strong> Enjoy a curated dining experience with personalized recommendations based on your preferences and ordering history.
-          </li>
-        </ul>
-      </section>
+        <div className="about-feature-card">
+          <div className="feature-icon">🛒</div>
+          <h3>Complete Cart & Checkout Flow</h3>
+          <p>
+            Powered by React Context API and localStorage persistence. Real-time bill calculation, quantity stepper controls, and simulated order tracking.
+          </p>
+        </div>
 
-      <section className="about-section">
-        <h1>Join Us on This Culinary Journey</h1>
-        <p>
-          Embark on a delightful journey with <strong>Bhojan-App</strong>, where we combine the power of React technology with Swiggy's live API to redefine your food ordering experience. Whether you're a food enthusiast, a busy professional, or someone looking for a convenient way to savor fantastic meals, Bhojan-App is here to make your dining dreams a reality.
-        </p>
-        <p>Thank you for choosing Bhojan-App – where good food meets great technology!</p>
-      </section>
+        <div className="about-feature-card">
+          <div className="feature-icon">🔍</div>
+          <h3>Smart Search & Filtering</h3>
+          <p>
+            Multi-attribute search across restaurant names, cuisines, and localities with instantaneous debounce, top-rated filter chips, and dietary toggles.
+          </p>
+        </div>
+
+        <div className="about-feature-card">
+          <div className="feature-icon">📱</div>
+          <h3>Responsive & Mobile-First</h3>
+          <p>
+            Carefully crafted responsive layouts with shimmer loading skeletons, accessible navigation, and optimized touch targets.
+          </p>
+        </div>
+      </div>
+
+      <div className="tech-stack-section">
+        <h2>Technologies & Tools</h2>
+        <div className="tech-badge-list">
+          <span className="tech-badge">React 18</span>
+          <span className="tech-badge">React Router DOM v6</span>
+          <span className="tech-badge">Context API</span>
+          <span className="tech-badge">HTTP Proxy Middleware</span>
+          <span className="tech-badge">Vanilla CSS3</span>
+          <span className="tech-badge">HTML5</span>
+          <span className="tech-badge">Swiggy Live DAPI</span>
+        </div>
+      </div>
+
+      <div className="about-cta-section">
+        <h2>Hungry for great food?</h2>
+        <p>Explore top restaurants and discover the best dishes near you.</p>
+        <Link to="/" className="about-explore-btn">
+          Explore Restaurants →
+        </Link>
+      </div>
     </div>
   );
 };

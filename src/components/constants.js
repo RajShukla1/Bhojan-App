@@ -1,17 +1,47 @@
-export const API = "https://www.swiggy.com/dapi/restaurants/list/v5?lat=26.8466937&lng=80.94616599999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING";
-export const RESTAURANT_API ="https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.8466937&lng=80.94616599999999&catalog_qa=undefined&submitAction=ENTER&restaurantId=";
-export const IMG_CON_URL ='https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/' ;
-export const filterData = (searchText,restaurants,page) =>{
-  // let restaurants = restaurantList;
-  console.log(restaurants);
-  console.log(searchText);
-  if(page === 'home')
-  restaurants = restaurants.filter((restaurant)=>restaurant?.info?.name?.toLowerCase()?.includes(searchText.toLowerCase()));
-  if(page === 'menu')
-    restaurants = restaurants.filter((restaurant)=>restaurant?.card?.info?.name?.toLowerCase()?.includes(searchText.toLowerCase()))
-    console.log(restaurants);
-  return restaurants;
-}
+// Development server proxy path (uses setupProxy.js to bypass CORS on localhost)
+export const PROXY_API = '/dapi/restaurants/list/v5?lat=26.8466937&lng=80.94616599999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING';
+export const DIRECT_API = 'https://www.swiggy.com/dapi/restaurants/list/v5?lat=26.8466937&lng=80.94616599999999&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING';
+
+export const PROXY_RESTAURANT_API = '/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.8466937&lng=80.94616599999999&catalog_qa=undefined&submitAction=ENTER&restaurantId=';
+export const DIRECT_RESTAURANT_API = 'https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=26.8466937&lng=80.94616599999999&catalog_qa=undefined&submitAction=ENTER&restaurantId=';
+
+// Default exports for backward compatibility
+export const API = PROXY_API;
+export const RESTAURANT_API = PROXY_RESTAURANT_API;
+
+export const IMG_CON_URL = 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/';
+
+export const filterData = (searchText, list, page) => {
+  if (!searchText || !list) return list || [];
+  const query = searchText.toLowerCase().trim();
+
+  if (page === 'home') {
+    return list.filter((restaurant) => {
+      const name = restaurant?.info?.name?.toLowerCase() || '';
+      const cuisines = restaurant?.info?.cuisines || [];
+      const locality = restaurant?.info?.locality?.toLowerCase() || '';
+      const area = restaurant?.info?.areaName?.toLowerCase() || '';
+      return (
+        name.includes(query) ||
+        locality.includes(query) ||
+        area.includes(query) ||
+        cuisines.some((c) => c.toLowerCase().includes(query))
+      );
+    });
+  }
+
+  if (page === 'menu') {
+    return list.filter((item) => {
+      const info = item?.card?.info || item?.info || item;
+      const name = info?.name?.toLowerCase() || '';
+      const category = info?.category?.toLowerCase() || '';
+      const desc = info?.description?.toLowerCase() || '';
+      return name.includes(query) || category.includes(query) || desc.includes(query);
+    });
+  }
+
+  return list;
+};
 export const restaurantList = [{
     "info": {
       "id": "59284",
@@ -892,3 +922,312 @@ export const restaurantList = [{
     },
     "widgetId": "collectionV5RestaurantListWidget_SimRestoRelevance_food_seo"
   }];
+
+export const FALLBACK_MENUS = {
+  // Domino's Pizza
+  '59284': [
+    {
+      card: {
+        info: {
+          id: 'dom_1',
+          name: 'Margherita Pizza',
+          category: 'Pizzas',
+          price: 23900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.4' } },
+          description: 'Classic delight with 100% real mozzarella cheese.',
+          imageId: 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'dom_2',
+          name: 'Peppy Paneer Pizza',
+          category: 'Pizzas',
+          price: 33900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.5' } },
+          description: 'Flavorful paneer chunks, crisp capsicum and spicy red paprika.',
+          imageId: 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'dom_3',
+          name: 'Farmhouse Veg Delight',
+          category: 'Pizzas',
+          price: 39900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.6' } },
+          description: 'Delightful combination of onion, capsicum, tomato & grilled mushroom.',
+          imageId: 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'dom_4',
+          name: 'Pepper Barbecue Chicken Pizza',
+          category: 'Non-Veg Pizzas',
+          price: 44900,
+          isVeg: 0,
+          ratings: { aggregatedRating: { rating: '4.7' } },
+          description: 'Pepper barbecue chicken for that extra flavorful kick.',
+          imageId: 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'dom_5',
+          name: 'Stuffed Garlic Breadsticks',
+          category: 'Sides',
+          price: 15900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.6' } },
+          description: 'Freshly baked garlic breadsticks filled with melted cheese and sweet corn.',
+          imageId: 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'dom_6',
+          name: 'Choco Lava Cake',
+          category: 'Desserts',
+          price: 11900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.8' } },
+          description: 'Chocolate lovers delight! Indulgent molten chocolate oozing from the center.',
+          imageId: 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+  ],
+  // Jahangir Hotel
+  '75446': [
+    {
+      card: {
+        info: {
+          id: 'jah_1',
+          name: 'Special Chicken Dum Biryani',
+          category: 'Biryani',
+          price: 24000,
+          isVeg: 0,
+          ratings: { aggregatedRating: { rating: '4.5' } },
+          description: 'Fragrant basmati rice slow-cooked with tender marinated chicken and secret spices.',
+          imageId: 'd4638e3377ec4f03a7435c3c61849837',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'jah_2',
+          name: 'Mutton Galawati Kebab (4 Pcs)',
+          category: 'Mughlai',
+          price: 32000,
+          isVeg: 0,
+          ratings: { aggregatedRating: { rating: '4.7' } },
+          description: 'Mouth-melting Lucknawi delicacy seasoned with over 160 secret aromatic spices.',
+          imageId: 'd4638e3377ec4f03a7435c3c61849837',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'jah_3',
+          name: 'Lucknawi Butter Chicken',
+          category: 'Main Course',
+          price: 34000,
+          isVeg: 0,
+          ratings: { aggregatedRating: { rating: '4.3' } },
+          description: 'Tender chicken pieces simmered in rich, buttery, velvety tomato gravy.',
+          imageId: 'd4638e3377ec4f03a7435c3c61849837',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'jah_4',
+          name: 'Paneer Lababdar',
+          category: 'Main Course',
+          price: 26000,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.2' } },
+          description: 'Cottage cheese cubes bathed in rich cashewnut and tomato gravy.',
+          imageId: 'd4638e3377ec4f03a7435c3c61849837',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'jah_5',
+          name: 'Ulta Tawa Paratha (2 Pcs)',
+          category: 'Breads',
+          price: 5000,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.6' } },
+          description: 'Soft, flaky traditional saffron-infused Lucknawi paratha.',
+          imageId: 'd4638e3377ec4f03a7435c3c61849837',
+          showImage: true,
+        },
+      },
+    },
+  ],
+  // The Belgian Waffle Co.
+  '755613': [
+    {
+      card: {
+        info: {
+          id: 'bw_1',
+          name: 'Chocolate Overload Waffle',
+          category: 'Waffles',
+          price: 16500,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.8' } },
+          description: 'Crispy waffle sandwich overloaded with rich dark and milk chocolate.',
+          imageId: '5116a385bac0548e06c33c08350fbf11',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'bw_2',
+          name: 'Red Velvet Waffle Cake',
+          category: 'Waffles',
+          price: 18000,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.7' } },
+          description: 'Original red velvet waffle topped with creamy white chocolate drizzle.',
+          imageId: '5116a385bac0548e06c33c08350fbf11',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'bw_3',
+          name: 'Nutella Loaded Waffle',
+          category: 'Waffles',
+          price: 19500,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.9' } },
+          description: 'Warm crispy golden waffle generously smothered with pure hazelnut Nutella.',
+          imageId: '5116a385bac0548e06c33c08350fbf11',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: 'bw_4',
+          name: 'Almond Cocoa Butter Waffle',
+          category: 'Waffles',
+          price: 17500,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.5' } },
+          description: 'Toasted almond slivers on crispy cocoa waffle with creamy chocolate filling.',
+          imageId: '5116a385bac0548e06c33c08350fbf11',
+          showImage: true,
+        },
+      },
+    },
+  ],
+};
+
+export const getFallbackMenu = (restaurantId, restaurantInfo) => {
+  if (FALLBACK_MENUS[restaurantId]) {
+    return FALLBACK_MENUS[restaurantId];
+  }
+
+  // Generic appetizing menu for other restaurants
+  const resName = restaurantInfo?.name || 'Chef';
+  const cuisines = restaurantInfo?.cuisines || ['Indian', 'Snacks'];
+  return [
+    {
+      card: {
+        info: {
+          id: `${restaurantId}_special_1`,
+          name: `${resName} Special Deluxe Platter`,
+          category: 'Chef Specials',
+          price: 29900,
+          isVeg: restaurantInfo?.veg ? 1 : 0,
+          ratings: { aggregatedRating: { rating: '4.6' } },
+          description: `Signature house combination featuring our freshest ingredients and authentic ${cuisines[0] || 'spices'}.`,
+          imageId: restaurantInfo?.cloudinaryImageId || 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: `${restaurantId}_special_2`,
+          name: 'Paneer Butter Tikka Delight',
+          category: 'Appetizers',
+          price: 24900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.5' } },
+          description: 'Char-grilled cottage cheese cubes tossed in spicy tandoori marinade and mint chutney.',
+          imageId: restaurantInfo?.cloudinaryImageId || 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: `${restaurantId}_special_3`,
+          name: 'Gourmet Meal Box Combo',
+          category: 'Main Course',
+          price: 27900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.4' } },
+          description: 'Complete wholesome meal with signature main, aromatic basmati rice, bread and dessert.',
+          imageId: restaurantInfo?.cloudinaryImageId || 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+    {
+      card: {
+        info: {
+          id: `${restaurantId}_special_4`,
+          name: 'Refreshing Masala Beverage',
+          category: 'Beverages',
+          price: 8900,
+          isVeg: 1,
+          ratings: { aggregatedRating: { rating: '4.3' } },
+          description: 'Chilled thirst quencher infused with roasted cumin, mint leaves and fresh lemon.',
+          imageId: restaurantInfo?.cloudinaryImageId || 'jd3b24bmmmwsdpezahj5',
+          showImage: true,
+        },
+      },
+    },
+  ];
+};
