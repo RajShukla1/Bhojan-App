@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/dapi/:path*",
+      "destination": "https://www.swiggy.com/dapi/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
